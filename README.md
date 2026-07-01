@@ -11,7 +11,7 @@ El jugador controla el equipo azul y debe conquistar la base enemiga roja. En el
 - Bloque 1: Proyecto base — creado.
 - Bloque 2: Mapa y rutas — creado.
 - Bloque 3: Bases — creado.
-- Bloque 4: Producción automática — pendiente.
+- Bloque 4: Producción automática — creado.
 - Bloque 5: Soldados — pendiente.
 - Bloque 6: Movimiento por clic o toque — pendiente.
 - Bloque 7: Combate básico — pendiente.
@@ -54,7 +54,8 @@ El juego ya tiene una estructura inicial con:
 - tres bases neutrales;
 - sistema inicial para detectar puntos válidos del camino;
 - bases reales como escenas reutilizables;
-- selección de bases por clic o toque.
+- selección de bases por clic o toque;
+- producción automática acumulada en bases azules y rojas.
 
 ## Regla del proyecto
 
