@@ -9,7 +9,7 @@ Este proyecto se construirá un bloque por chat. Cada bloque debe quedar funcion
 | 1 | Proyecto base | Creado |
 | 2 | Mapa y rutas | Creado |
 | 3 | Bases | Creado |
-| 4 | Producción automática | Pendiente |
+| 4 | Producción automática | Creado |
 | 5 | Soldados | Pendiente |
 | 6 | Movimiento por clic o toque | Pendiente |
 | 7 | Combate básico | Pendiente |
@@ -38,4 +38,4 @@ Cada sistema debe poder crecer por separado:
 
 ## Último avance
 
-El Bloque 3 convirtió las bases en escenas reales reutilizables. Ahora cada base puede guardar equipo, tipo, dificultad, defensores, unidad que produce y estado de selección.
+El Bloque 4 creó la producción automática. Ahora las bases azules y rojas acumulan unidades por tiempo. Las bases neutrales muestran defensores y no producen hasta ser conquistadas.
