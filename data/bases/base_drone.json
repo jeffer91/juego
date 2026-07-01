@@ -1,0 +1,12 @@
+{
+  "id": "base_drone",
+  "name": "Base de drones",
+  "description": "Base especial que produce drones explosivos cuando es conquistada.",
+  "produces": "drone",
+  "spawn_interval_seconds": 7.0,
+  "neutral_defenders_by_difficulty": {
+    "1": 8,
+    "2": 12,
+    "3": 20
+  }
+}
