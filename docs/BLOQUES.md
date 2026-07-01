@@ -7,7 +7,7 @@ Este proyecto se construirá un bloque por chat. Cada bloque debe quedar funcion
 | Bloque | Nombre | Estado |
 |---:|---|---|
 | 1 | Proyecto base | Creado |
-| 2 | Mapa y rutas | Pendiente |
+| 2 | Mapa y rutas | Creado |
 | 3 | Bases | Pendiente |
 | 4 | Producción automática | Pendiente |
 | 5 | Soldados | Pendiente |
@@ -35,3 +35,7 @@ Cada sistema debe poder crecer por separado:
 - inteligencia enemiga;
 - victoria y derrota;
 - interfaz.
+
+## Último avance
+
+El Bloque 2 creó el sistema inicial de rutas del nivel 1. Ahora el juego ya tiene puntos, segmentos de ruta y una forma de calcular el punto válido más cercano si el jugador toca fuera del camino.
