@@ -1,0 +1,26 @@
+; Engine configuration file.
+; It is best edited using the Godot editor.
+;
+; Format:
+;   [section]
+;   param=value
+
+config_version=5
+
+[application]
+config/name="Conquista de Bases"
+run/main_scene="res://scenes/main/MainGame.tscn"
+config/features=PackedStringArray("4.x", "Mobile")
+
+[autoload]
+GameManager="*res://scripts/core/GameManager.gd"
+TeamManager="*res://scripts/core/TeamManager.gd"
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[rendering]
+renderer/rendering_method="mobile"
