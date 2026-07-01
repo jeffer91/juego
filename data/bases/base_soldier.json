@@ -1,0 +1,12 @@
+{
+  "id": "base_soldier",
+  "name": "Base de soldados",
+  "description": "Base que produce soldados normales cuando pertenece al jugador o al enemigo.",
+  "produces": "soldier",
+  "spawn_interval_seconds": 3.0,
+  "neutral_defenders_by_difficulty": {
+    "1": 5,
+    "2": 12,
+    "3": 18
+  }
+}
