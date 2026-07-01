@@ -1,0 +1,75 @@
+{
+  "level_number": 1,
+  "name": "Primer combate",
+  "description": "Nivel inicial con tres rutas, bases laterales de soldados y base central de drones.",
+  "teams": {
+    "player": {
+      "color": "blue",
+      "starts_with": "player_base"
+    },
+    "enemy": {
+      "color": "red",
+      "starts_with": "enemy_base"
+    },
+    "neutral": {
+      "color": "gray"
+    }
+  },
+  "points": [
+    { "id": "player_base", "x": 160, "y": 360 },
+    { "id": "enemy_base", "x": 1120, "y": 360 },
+    { "id": "neutral_top", "x": 640, "y": 170 },
+    { "id": "neutral_center", "x": 640, "y": 360 },
+    { "id": "neutral_bottom", "x": 640, "y": 550 }
+  ],
+  "routes": [
+    { "id": "upper_left", "route": "upper", "from": "player_base", "to": "neutral_top" },
+    { "id": "upper_right", "route": "upper", "from": "neutral_top", "to": "enemy_base" },
+    { "id": "center_left", "route": "center", "from": "player_base", "to": "neutral_center" },
+    { "id": "center_right", "route": "center", "from": "neutral_center", "to": "enemy_base" },
+    { "id": "bottom_left", "route": "bottom", "from": "player_base", "to": "neutral_bottom" },
+    { "id": "bottom_right", "route": "bottom", "from": "neutral_bottom", "to": "enemy_base" }
+  ],
+  "bases": [
+    {
+      "id": "player_base",
+      "point_id": "player_base",
+      "team": "player",
+      "base_type": "main_player",
+      "difficulty": 0,
+      "produces": "soldier"
+    },
+    {
+      "id": "enemy_base",
+      "point_id": "enemy_base",
+      "team": "enemy",
+      "base_type": "main_enemy",
+      "difficulty": 0,
+      "produces": "soldier"
+    },
+    {
+      "id": "neutral_top",
+      "point_id": "neutral_top",
+      "team": "neutral",
+      "base_type": "soldier_base",
+      "difficulty": 1,
+      "produces": "soldier"
+    },
+    {
+      "id": "neutral_center",
+      "point_id": "neutral_center",
+      "team": "neutral",
+      "base_type": "drone_base",
+      "difficulty": 2,
+      "produces": "drone"
+    },
+    {
+      "id": "neutral_bottom",
+      "point_id": "neutral_bottom",
+      "team": "neutral",
+      "base_type": "soldier_base",
+      "difficulty": 1,
+      "produces": "soldier"
+    }
+  ]
+}
