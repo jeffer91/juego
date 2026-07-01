@@ -69,6 +69,7 @@ func _spawn_bases() -> void:
 		var base := base_factory.create_base(base_data, spawn_position)
 		base.selected.connect(_on_base_selected)
 		base.owner_changed.connect(_on_base_owner_changed)
+		base.unit_generated.connect(_on_base_unit_generated)
 		base_container.add_child(base)
 
 func _on_base_selected(base_id: String) -> void:
@@ -78,22 +79,25 @@ func _on_base_selected(base_id: String) -> void:
 func _on_base_owner_changed(base_id: String, new_team_id: String) -> void:
 	print("Base %s cambio a equipo %s" % [base_id, new_team_id])
 
+func _on_base_unit_generated(base_id: String, team_id: String, unit_type: String, total_units: int) -> void:
+	print("Base %s produjo %s para %s. Total: %d" % [base_id, unit_type, team_id, total_units])
+
 func _build_hud_placeholder() -> void:
 	var canvas_layer := CanvasLayer.new()
 	canvas_layer.name = "HUDPlaceholder"
 	add_child(canvas_layer)
 
 	var title_label := Label.new()
-	title_label.text = "Bloque 3 - Bases reales creadas"
+	title_label.text = "Bloque 4 - Produccion automatica creada"
 	title_label.position = Vector2(24, 18)
 	canvas_layer.add_child(title_label)
 
 	var instruction_label := Label.new()
-	instruction_label.text = "Siguiente bloque: produccion automatica"
+	instruction_label.text = "Siguiente bloque: soldados reales"
 	instruction_label.position = Vector2(24, 48)
 	canvas_layer.add_child(instruction_label)
 
 	var helper_label := Label.new()
-	helper_label.text = "Puedes tocar una base para seleccionarla"
+	helper_label.text = "S = soldados acumulados | Def = defensores neutrales"
 	helper_label.position = Vector2(24, 78)
 	canvas_layer.add_child(helper_label)
