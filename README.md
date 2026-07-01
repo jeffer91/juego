@@ -9,7 +9,7 @@ El jugador controla el equipo azul y debe conquistar la base enemiga roja. En el
 ## Estado del desarrollo
 
 - Bloque 1: Proyecto base — creado.
-- Bloque 2: Mapa y rutas — pendiente.
+- Bloque 2: Mapa y rutas — creado.
 - Bloque 3: Bases — pendiente.
 - Bloque 4: Producción automática — pendiente.
 - Bloque 5: Soldados — pendiente.
@@ -41,6 +41,18 @@ La escena inicial está en:
 ```txt
 scenes/main/MainGame.tscn
 ```
+
+## Avance actual
+
+El juego ya tiene una estructura inicial con:
+
+- escena principal;
+- colores de equipos;
+- tres rutas del nivel 1;
+- base del jugador;
+- base enemiga;
+- tres bases neutrales;
+- sistema inicial para detectar puntos válidos del camino.
 
 ## Regla del proyecto
 
