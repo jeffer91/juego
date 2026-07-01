@@ -72,7 +72,7 @@ func _apply_timer_config() -> void:
 
 	production_timer.wait_time = max(spawn_interval_seconds, 0.2)
 	production_timer.one_shot = false
-	autostart = false
+	production_timer.autostart = false
 
 func _refresh_production_state() -> void:
 	var should_be_active := can_produce()
