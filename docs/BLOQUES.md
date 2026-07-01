@@ -8,7 +8,7 @@ Este proyecto se construirá un bloque por chat. Cada bloque debe quedar funcion
 |---:|---|---|
 | 1 | Proyecto base | Creado |
 | 2 | Mapa y rutas | Creado |
-| 3 | Bases | Pendiente |
+| 3 | Bases | Creado |
 | 4 | Producción automática | Pendiente |
 | 5 | Soldados | Pendiente |
 | 6 | Movimiento por clic o toque | Pendiente |
@@ -38,4 +38,4 @@ Cada sistema debe poder crecer por separado:
 
 ## Último avance
 
-El Bloque 2 creó el sistema inicial de rutas del nivel 1. Ahora el juego ya tiene puntos, segmentos de ruta y una forma de calcular el punto válido más cercano si el jugador toca fuera del camino.
+El Bloque 3 convirtió las bases en escenas reales reutilizables. Ahora cada base puede guardar equipo, tipo, dificultad, defensores, unidad que produce y estado de selección.
