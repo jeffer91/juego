@@ -1,12 +1,13 @@
 {
   "id": "base_soldier",
   "name": "Base de soldados",
-  "description": "Base que produce soldados normales cuando pertenece al jugador o al enemigo.",
+  "description": "Produce soldados en grupos de cinco cuando pertenece a un equipo.",
   "produces": "soldier",
-  "spawn_interval_seconds": 3.0,
+  "spawn_interval_seconds": 2.4,
+  "max_units": 60,
   "neutral_defenders_by_difficulty": {
     "1": 5,
-    "2": 12,
-    "3": 18
+    "2": 10,
+    "3": 15
   }
 }

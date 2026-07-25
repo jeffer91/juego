@@ -1,0 +1,94 @@
+{
+  "level_number": 2,
+  "name": "Cruce estratégico",
+  "description": "Mapa ampliado con rutas cruzadas, cinco bases neutrales y una IA más rápida.",
+  "settings": {
+    "objective": "Controla el cruce central y conquista la base roja.",
+    "ai_action_interval": 3.0,
+    "victory_base_id": "enemy_base",
+    "defeat_base_id": "player_base"
+  },
+  "points": [
+    { "id": "player_base", "x": 120, "y": 360 },
+    { "id": "enemy_base", "x": 1160, "y": 360 },
+    { "id": "neutral_top_left", "x": 420, "y": 150 },
+    { "id": "neutral_top_right", "x": 860, "y": 150 },
+    { "id": "neutral_center", "x": 640, "y": 360 },
+    { "id": "neutral_bottom_left", "x": 420, "y": 570 },
+    { "id": "neutral_bottom_right", "x": 860, "y": 570 }
+  ],
+  "routes": [
+    { "id": "top_1", "route": "upper", "from": "player_base", "to": "neutral_top_left" },
+    { "id": "top_2", "route": "upper", "from": "neutral_top_left", "to": "neutral_top_right" },
+    { "id": "top_3", "route": "upper", "from": "neutral_top_right", "to": "enemy_base" },
+    { "id": "center_1", "route": "center", "from": "player_base", "to": "neutral_center" },
+    { "id": "center_2", "route": "center", "from": "neutral_center", "to": "enemy_base" },
+    { "id": "bottom_1", "route": "bottom", "from": "player_base", "to": "neutral_bottom_left" },
+    { "id": "bottom_2", "route": "bottom", "from": "neutral_bottom_left", "to": "neutral_bottom_right" },
+    { "id": "bottom_3", "route": "bottom", "from": "neutral_bottom_right", "to": "enemy_base" },
+    { "id": "cross_1", "route": "cross", "from": "neutral_top_left", "to": "neutral_center" },
+    { "id": "cross_2", "route": "cross", "from": "neutral_center", "to": "neutral_top_right" },
+    { "id": "cross_3", "route": "cross", "from": "neutral_bottom_left", "to": "neutral_center" },
+    { "id": "cross_4", "route": "cross", "from": "neutral_center", "to": "neutral_bottom_right" }
+  ],
+  "bases": [
+    {
+      "id": "player_base",
+      "point_id": "player_base",
+      "team": "player",
+      "base_type": "main_player",
+      "difficulty": 0,
+      "produces": "soldier",
+      "initial_units": 15
+    },
+    {
+      "id": "enemy_base",
+      "point_id": "enemy_base",
+      "team": "enemy",
+      "base_type": "main_enemy",
+      "difficulty": 0,
+      "produces": "soldier",
+      "initial_units": 20
+    },
+    {
+      "id": "neutral_top_left",
+      "point_id": "neutral_top_left",
+      "team": "neutral",
+      "base_type": "soldier_base",
+      "difficulty": 1,
+      "produces": "soldier"
+    },
+    {
+      "id": "neutral_top_right",
+      "point_id": "neutral_top_right",
+      "team": "neutral",
+      "base_type": "soldier_base",
+      "difficulty": 2,
+      "produces": "soldier"
+    },
+    {
+      "id": "neutral_center",
+      "point_id": "neutral_center",
+      "team": "neutral",
+      "base_type": "drone_base",
+      "difficulty": 3,
+      "produces": "drone"
+    },
+    {
+      "id": "neutral_bottom_left",
+      "point_id": "neutral_bottom_left",
+      "team": "neutral",
+      "base_type": "soldier_base",
+      "difficulty": 1,
+      "produces": "soldier"
+    },
+    {
+      "id": "neutral_bottom_right",
+      "point_id": "neutral_bottom_right",
+      "team": "neutral",
+      "base_type": "soldier_base",
+      "difficulty": 2,
+      "produces": "soldier"
+    }
+  ]
+}

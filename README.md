@@ -1,62 +1,70 @@
 # Juego Conquista de Bases
 
-Juego 2D de estrategia en tiempo real, pensado para Android, desarrollado con **Godot** y organizado para trabajar también desde **Visual Studio Code**.
-
-## Idea principal
-
-El jugador controla el equipo azul y debe conquistar la base enemiga roja. En el mapa existen bases neutrales grises que tienen defensores. Al conquistar una base neutral, cambia al color del equipo ganador y empieza a generar unidades automáticamente.
+Juego 2D de estrategia en tiempo real para Android, desarrollado con **Godot 4**. El jugador controla el equipo azul, conquista bases neutrales y debe tomar la base roja antes de perder la propia.
 
 ## Estado del desarrollo
 
-- Bloque 1: Proyecto base — creado.
-- Bloque 2: Mapa y rutas — creado.
-- Bloque 3: Bases — creado.
-- Bloque 4: Producción automática — creado.
-- Bloque 5: Soldados — pendiente.
-- Bloque 6: Movimiento por clic o toque — pendiente.
-- Bloque 7: Combate básico — pendiente.
-- Bloque 8: Captura de bases — pendiente.
-- Bloque 9: Drones — pendiente.
-- Bloque 10: IA enemiga — pendiente.
-- Bloque 11: Victoria y derrota — pendiente.
-- Bloque 12: Progresión de niveles — pendiente.
+Los 12 bloques principales están implementados:
 
-## Herramientas recomendadas
+1. Proyecto base.
+2. Mapa y rutas.
+3. Bases reutilizables.
+4. Producción automática.
+5. Soldados en grupos de cinco.
+6. Movimiento por clic o toque.
+7. Combate automático.
+8. Captura de bases.
+9. Drones explosivos.
+10. Inteligencia enemiga.
+11. Victoria y derrota.
+12. Progresión y desbloqueo de niveles.
 
-- Godot 4.x
-- Visual Studio Code
-- GitHub
-- Android SDK para exportar a Android más adelante
+## Cómo jugar
+
+1. Toca una base azul para seleccionarla.
+2. Toca una ruta o una base como destino.
+3. Las bases de soldados envían grupos completos de cinco.
+4. También puedes tocar un grupo azul y darle un nuevo destino.
+5. Los grupos enemigos cercanos combaten automáticamente.
+6. Los drones explotan al detectar enemigos y no pueden capturar bases.
+7. Conquista la base roja para ganar. Si la base azul cae, pierdes.
+
+## Niveles incluidos
+
+- **Nivel 1: Primer combate.** Tres rutas y una base central de drones.
+- **Nivel 2: Cruce estratégico.** Rutas cruzadas, más bases neutrales e IA más rápida.
+
+El progreso se guarda en `user://progress.cfg` y el nivel 2 se desbloquea al superar el nivel 1.
+
+## Estructura
+
+```text
+data/
+  bases/       Definiciones de bases
+  levels/      Mapas y dificultad
+  units/       Estadísticas de unidades
+scenes/
+  bases/       Escenas de bases
+  main/        Escena principal
+  units/       Escena de grupos
+scripts/
+  ai/          Inteligencia enemiga
+  bases/       Producción y captura
+  core/        Estado y coordinación
+  data/        Carga de contenido JSON
+  movement/    Rutas y búsqueda de caminos
+  ui/          Interfaz del juego
+  units/       Soldados y drones
+```
 
 ## Cómo abrir el proyecto
 
-1. Descargar o clonar este repositorio.
-2. Abrir Godot.
-3. Elegir **Importar**.
-4. Seleccionar el archivo `project.godot`.
-5. Ejecutar la escena principal.
+1. Descarga o clona el repositorio.
+2. Abre Godot 4.
+3. Selecciona **Importar**.
+4. Elige `project.godot`.
+5. Ejecuta `scenes/main/MainGame.tscn`.
 
-La escena inicial está en:
+## Principio de arquitectura
 
-```txt
-scenes/main/MainGame.tscn
-```
-
-## Avance actual
-
-El juego ya tiene una estructura inicial con:
-
-- escena principal;
-- colores de equipos;
-- tres rutas del nivel 1;
-- base del jugador;
-- base enemiga;
-- tres bases neutrales;
-- sistema inicial para detectar puntos válidos del camino;
-- bases reales como escenas reutilizables;
-- selección de bases por clic o toque;
-- producción automática acumulada en bases azules y rojas.
-
-## Regla del proyecto
-
-El juego debe mantenerse modular. Cada sistema debe estar separado para poder agregar después más tipos de bases, soldados, drones, carritos, tanques y niveles sin rehacer todo el código.
+El código contiene las reglas, los JSON contienen el contenido y las escenas muestran el juego. Esto permite agregar niveles, bases y unidades sin reescribir el sistema central.
