@@ -34,14 +34,17 @@ var game_ended := false
 var enemy_ai: EnemyAI
 var hud: GameHUD
 
+func _game_manager() -> Variant:
+	return get_node("/root/GameManager")
+
 func _ready() -> void:
 	_build_game_layers()
 	_build_hud()
 	_build_enemy_ai()
-	_load_level(maxi(1, GameManager.current_level))
+	_load_level(maxi(1, int(_game_manager().get("current_level"))))
 
 func _process(delta: float) -> void:
-	if game_ended or GameManager.get_state_name() != "playing":
+	if game_ended or str(_game_manager().call("get_state_name")) != "playing":
 		return
 
 	combat_accumulator += delta
@@ -120,7 +123,7 @@ func _load_level(level_number: int) -> void:
 
 	current_level = level_number
 	_spawn_bases()
-	GameManager.start_game(current_level)
+	_game_manager().call("start_game", current_level)
 
 	var settings := route_manager.get_level_settings()
 	var objective := str(settings.get("objective", "Conquista la base roja antes de perder la azul."))
@@ -205,7 +208,7 @@ func _clear_selection() -> void:
 		hud.set_selected_text("ninguna")
 
 func _unhandled_input(event: InputEvent) -> void:
-	if game_ended or GameManager.get_state_name() != "playing":
+	if game_ended or str(_game_manager().call("get_state_name")) != "playing":
 		return
 
 	var pressed := false
@@ -333,7 +336,7 @@ func _resolve_base_assault(group: UnitGroup, target_base: Base) -> void:
 	if attackers > defenders:
 		target_base.apply_defense_loss(defenders)
 		var survivors := attackers - defenders
-		target_base.set_owner(group.get_team_id())
+		target_base.change_team(group.get_team_id())
 
 		if group.get_unit_type() == target_base.get_produced_unit_type():
 			target_base.add_units(survivors)
@@ -360,7 +363,7 @@ func _resolve_nearby_defenders(attacker: UnitGroup, target_base: Base) -> void:
 			continue
 
 		var attacker_count := attacker.get_unit_count()
-		var defender_count := defender.get_unit_count()
+		var defender_count: int = int(defender.get_unit_count())
 		if attacker_count > defender_count:
 			attacker.set_unit_count(attacker_count - defender_count)
 			defender.destroy_group()
@@ -492,15 +495,15 @@ func _finish_game(victory: bool) -> void:
 	_clear_selection()
 
 	if victory:
-		GameManager.register_victory()
-		var has_next := GameManager.has_level(current_level + 1)
+		_game_manager().call("register_victory")
+		var has_next := bool(_game_manager().call("has_level", current_level + 1))
 		hud.show_result(
 			"Victoria",
 			"Conquistaste la base enemiga y completaste el nivel %d." % current_level,
 			has_next
 		)
 	else:
-		GameManager.register_defeat()
+		_game_manager().call("register_defeat")
 		hud.show_result(
 			"Derrota",
 			"La base azul fue conquistada. Reorganiza tus grupos e inténtalo otra vez.",
@@ -508,7 +511,7 @@ func _finish_game(victory: bool) -> void:
 		)
 
 func run_enemy_ai_turn() -> void:
-	if game_ended or GameManager.get_state_name() != "playing":
+	if game_ended or str(_game_manager().call("get_state_name")) != "playing":
 		return
 
 	var source := _choose_enemy_source_base()
@@ -599,5 +602,5 @@ func _on_restart_pressed() -> void:
 
 func _on_next_level_pressed() -> void:
 	var next_level := current_level + 1
-	if GameManager.is_level_unlocked(next_level):
+	if bool(_game_manager().call("is_level_unlocked", next_level)):
 		_load_level(next_level)

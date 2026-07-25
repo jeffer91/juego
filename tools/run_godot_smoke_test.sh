@@ -30,4 +30,10 @@ echo "Cargando la escena principal durante cinco iteraciones..."
   --scene res://scenes/main/MainGame.tscn \
   --quit-after 5
 
-echo "Prueba de humo de Godot completada correctamente."
+echo "Ejecutando la verificación funcional de los bloques 1 al 12..."
+"${BINARY_PATH}" \
+  --headless \
+  --path "${ROOT_DIR}" \
+  --scene res://tests/TestRunner.tscn
+
+echo "Pruebas de Godot completadas correctamente."

@@ -2,6 +2,9 @@ extends Node
 
 class_name EnemyAI
 
+func _game_manager() -> Variant:
+	return get_node("/root/GameManager")
+
 var controller: Node
 var action_interval := 4.0
 var action_timer: Timer
@@ -36,7 +39,7 @@ func _ensure_timer() -> void:
 	action_timer.timeout.connect(_on_action_timer_timeout)
 
 func _on_action_timer_timeout() -> void:
-	if controller == null or GameManager.get_state_name() != "playing":
+	if controller == null or _game_manager().get_state_name() != "playing":
 		return
 	if controller.has_method("run_enemy_ai_turn"):
 		controller.run_enemy_ai_turn()

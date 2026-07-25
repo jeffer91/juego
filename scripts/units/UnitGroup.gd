@@ -2,6 +2,9 @@ extends Node2D
 
 class_name UnitGroup
 
+func _game_manager() -> Variant:
+	return get_node("/root/GameManager")
+
 signal selected(group: Node)
 signal arrived(group: Node, target_base_id: String)
 signal died(group: Node)
@@ -150,7 +153,7 @@ func is_moving() -> bool:
 	return moving
 
 func _process(delta: float) -> void:
-	if not moving or is_dead or GameManager.get_state_name() != "playing":
+	if not moving or is_dead or _game_manager().get_state_name() != "playing":
 		return
 
 	if movement_index >= movement_path.size():
@@ -222,11 +225,11 @@ func _update_label() -> void:
 func _get_team_color() -> Color:
 	match team_id:
 		"player":
-			return TeamManager.get_team_color(TeamManager.Team.PLAYER)
+			return Color(0.12, 0.45, 1.0)
 		"enemy":
-			return TeamManager.get_team_color(TeamManager.Team.ENEMY)
+			return Color(1.0, 0.15, 0.12)
 		_:
-			return TeamManager.get_team_color(TeamManager.Team.NEUTRAL)
+			return Color(0.55, 0.55, 0.55)
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	var was_pressed := false
