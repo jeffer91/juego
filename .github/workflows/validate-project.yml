@@ -18,3 +18,18 @@ jobs:
 
       - name: Comprobar estructura, JSON y referencias
         run: python3 tools/validate_project.py
+
+  prueba-godot:
+    runs-on: ubuntu-latest
+    needs: validacion-estatica
+    env:
+      GODOT_VERSION: "4.6.3"
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v6
+
+      - name: Instalar utilidades
+        run: sudo apt-get update && sudo apt-get install -y unzip
+
+      - name: Importar y abrir el proyecto con Godot
+        run: bash tools/run_godot_smoke_test.sh
