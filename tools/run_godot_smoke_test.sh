@@ -30,10 +30,16 @@ echo "Cargando la escena principal durante cinco iteraciones..."
   --scene res://scenes/main/MainGame.tscn \
   --quit-after 5
 
-echo "Ejecutando la verificación funcional de los bloques 1 al 12..."
+echo "Ejecutando la revisión integral de jugabilidad..."
 "${BINARY_PATH}" \
   --headless \
   --path "${ROOT_DIR}" \
   --scene res://tests/TestRunner.tscn
+
+echo "Ejecutando la regresión de rutas intermedias..."
+"${BINARY_PATH}" \
+  --headless \
+  --path "${ROOT_DIR}" \
+  --scene res://tests/TestRoutes.tscn
 
 echo "Pruebas de Godot completadas correctamente."
