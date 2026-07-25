@@ -1,0 +1,65 @@
+name: Corrección temporal de compilación
+
+on:
+  push:
+    branches:
+      - test/verificar-bloques-1-12
+
+permissions:
+  contents: write
+
+jobs:
+  corregir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar rama
+        uses: actions/checkout@v6
+        with:
+          ref: test/verificar-bloques-1-12
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Aplicar correcciones puntuales
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path("scripts/bases/Base.gd"): [
+                  ("func set_owner(new_team_id: String) -> void:", "func change_team(new_team_id: String) -> void:"),
+              ],
+              Path("scripts/core/MainGame.gd"): [
+                  ("target_base.set_owner(group.get_team_id())", "target_base.change_team(group.get_team_id())"),
+                  ("var defender_count := defender.get_unit_count()", "var defender_count: int = int(defender.get_unit_count())"),
+              ],
+              Path("tests/test_gameplay.gd"): [
+                  ("var units_before := player_base.get_available_units()", "var units_before: int = int(player_base.get_available_units())"),
+                  ("var units_after := player_base.get_available_units()", "var units_after: int = int(player_base.get_available_units())"),
+                  ("var groups_before := game._get_active_groups().size()", "var groups_before: int = int(game._get_active_groups().size())"),
+                  ("var groups_before_ai := game._get_active_groups().size()", "var groups_before_ai: int = int(game._get_active_groups().size())"),
+                  ("var groups_after_ai := game._get_active_groups().size()", "var groups_after_ai: int = int(game._get_active_groups().size())"),
+                  ("enemy_base.set_owner(\"player\")", "enemy_base.change_team(\"player\")"),
+                  ("restarted_player_base.set_owner(\"enemy\")", "restarted_player_base.change_team(\"enemy\")"),
+              ],
+          }
+
+          for path, changes in replacements.items():
+              text = path.read_text(encoding="utf-8")
+              original = text
+              for old, new in changes:
+                  text = text.replace(old, new)
+              if text != original:
+                  path.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Guardar correcciones
+        run: |
+          if git diff --quiet; then
+            echo "No hay cambios pendientes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/bases/Base.gd scripts/core/MainGame.gd tests/test_gameplay.gd
+          git commit -m "Corregir errores de compilación detectados por Godot"
+          git push origin HEAD:test/verificar-bloques-1-12
