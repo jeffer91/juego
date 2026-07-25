@@ -51,16 +51,16 @@ jobs:
         if: always() && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          COMMENT_ID: "5077337511"
         run: |
           {
             echo "### Verificación funcional con Godot"
             echo
             echo '```text'
-            tail -n 120 godot-test.log
+            grep -E '^\[OK\]|^\[FALLO\]|RESULTADO|SCRIPT ERROR|ERROR:|WARNING:' godot-test.log | tail -n 120 || true
             echo '```'
           } > godot-comment.md
-          gh pr comment "$PR_NUMBER" --body-file godot-comment.md
+          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${COMMENT_ID}" -f body="$(cat godot-comment.md)"
 
       - name: Confirmar resultado de Godot
         if: steps.godot_test.outputs.status != '0'
