@@ -34,6 +34,6 @@ echo "Ejecutando la verificación funcional de los bloques 1 al 12..."
 "${BINARY_PATH}" \
   --headless \
   --path "${ROOT_DIR}" \
-  --script res://tests/test_gameplay.gd
+  --scene res://tests/TestRunner.tscn
 
 echo "Pruebas de Godot completadas correctamente."
