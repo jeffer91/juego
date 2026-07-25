@@ -7,7 +7,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
@@ -17,6 +17,7 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v6
         with:
+          ref: ${{ github.head_ref || github.ref_name }}
           show-progress: false
 
       - name: Comprobar estructura, JSON y referencias
@@ -31,7 +32,25 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v6
         with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
           show-progress: false
+
+      - name: Aplicar correcciones de compatibilidad
+        run: python3 tools/fix_godot_compat.py
+
+      - name: Guardar correcciones en la rama
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No se requieren correcciones adicionales."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/core/MainGame.gd scripts/bases/BaseSpawner.gd scripts/bases/Base.gd scripts/units/UnitGroup.gd scripts/ai/EnemyAI.gd
+          git commit -m "Resolver dependencias de autoload en Godot"
+          git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
 
       - name: Instalar utilidades
         run: sudo apt-get update -qq && sudo apt-get install -y -qq unzip
