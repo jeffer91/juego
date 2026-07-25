@@ -245,11 +245,11 @@ func _get_unit_short_name() -> String:
 func _get_team_color() -> Color:
 	match team_id:
 		"player":
-			return TeamManager.get_team_color(TeamManager.Team.PLAYER)
+			return Color(0.12, 0.45, 1.0)
 		"enemy":
-			return TeamManager.get_team_color(TeamManager.Team.ENEMY)
+			return Color(1.0, 0.15, 0.12)
 		_:
-			return TeamManager.get_team_color(TeamManager.Team.NEUTRAL)
+			return Color(0.55, 0.55, 0.55)
 
 func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	var was_pressed := false

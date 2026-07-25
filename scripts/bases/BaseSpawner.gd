@@ -2,6 +2,9 @@ extends Node
 
 class_name BaseSpawner
 
+func _game_manager() -> Variant:
+	return get_node("/root/GameManager")
+
 signal unit_generated(base_id: String, team_id: String, unit_type: String, total_units: int)
 signal units_changed(base_id: String, total_units: int)
 signal production_state_changed(base_id: String, is_active: bool)
@@ -20,8 +23,8 @@ func _ready() -> void:
 	_ensure_timer()
 	_apply_timer_config()
 
-	if not GameManager.game_state_changed.is_connected(_on_game_state_changed):
-		GameManager.game_state_changed.connect(_on_game_state_changed)
+	if not _game_manager().game_state_changed.is_connected(_on_game_state_changed):
+		_game_manager().game_state_changed.connect(_on_game_state_changed)
 
 	_refresh_production_state()
 
@@ -72,7 +75,7 @@ func get_stored_units() -> int:
 	return stored_units
 
 func can_produce() -> bool:
-	return team_id != "neutral" and not unit_type.is_empty() and GameManager.get_state_name() == "playing"
+	return team_id != "neutral" and not unit_type.is_empty() and _game_manager().get_state_name() == "playing"
 
 func _ensure_timer() -> void:
 	if production_timer != null:
