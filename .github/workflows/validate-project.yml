@@ -1,0 +1,20 @@
+name: Validar proyecto
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validacion-estatica:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v6
+
+      - name: Comprobar estructura, JSON y referencias
+        run: python3 tools/validate_project.py
