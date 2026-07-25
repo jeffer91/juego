@@ -51,13 +51,13 @@ func _run_tests() -> void:
 	_check(player_base != null and enemy_base != null, "Bloque 3: las bases principales están disponibles")
 
 	# Bloque 4: producción automática y contador único.
-	var units_before := player_base.get_available_units()
+	var units_before: int = int(player_base.get_available_units())
 	player_base.spawner._on_production_timer_timeout()
-	var units_after := player_base.get_available_units()
+	var units_after: int = int(player_base.get_available_units())
 	_check(units_after == units_before + 1, "Bloque 4: una base activa produce y actualiza su cantidad de unidades")
 
 	# Bloques 5 y 6: grupos de soldados y movimiento.
-	var groups_before := game._get_active_groups().size()
+	var groups_before: int = int(game._get_active_groups().size())
 	var dispatched: bool = game._dispatch_from_base(player_base, neutral_top.position, neutral_top.base_id)
 	var dispatched_groups: Array = game._get_active_groups()
 	_check(dispatched and dispatched_groups.size() > groups_before, "Bloque 5: la base crea grupos reales de soldados")
@@ -102,13 +102,13 @@ func _run_tests() -> void:
 	_check(drone_target.get_unit_count() == 2, "Bloque 9: la explosión causa el daño de área configurado")
 
 	# Bloque 10: la IA elige una base enemiga y despacha unidades.
-	var groups_before_ai := game._get_active_groups().size()
+	var groups_before_ai: int = int(game._get_active_groups().size())
 	game.run_enemy_ai_turn()
-	var groups_after_ai := game._get_active_groups().size()
+	var groups_after_ai: int = int(game._get_active_groups().size())
 	_check(groups_after_ai > groups_before_ai, "Bloque 10: la IA enemiga envía grupos hacia un objetivo")
 
 	# Bloques 11 y 12: victoria, derrota, desbloqueo y persistencia de progreso.
-	enemy_base.set_owner("player")
+	enemy_base.change_team("player")
 	_check(game.game_ended and GameManager.get_state_name() == "victory", "Bloque 11: conquistar la base roja activa la victoria")
 	_check(GameManager.is_level_unlocked(2), "Bloque 12: la victoria del nivel 1 desbloquea el nivel 2")
 
@@ -116,7 +116,7 @@ func _run_tests() -> void:
 	await process_frame
 	await process_frame
 	var restarted_player_base = game.bases_by_id.get("player_base")
-	restarted_player_base.set_owner("enemy")
+	restarted_player_base.change_team("enemy")
 	_check(game.game_ended and GameManager.get_state_name() == "defeat", "Bloque 11: perder la base azul activa la derrota")
 
 	game.queue_free()

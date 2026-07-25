@@ -333,7 +333,7 @@ func _resolve_base_assault(group: UnitGroup, target_base: Base) -> void:
 	if attackers > defenders:
 		target_base.apply_defense_loss(defenders)
 		var survivors := attackers - defenders
-		target_base.set_owner(group.get_team_id())
+		target_base.change_team(group.get_team_id())
 
 		if group.get_unit_type() == target_base.get_produced_unit_type():
 			target_base.add_units(survivors)
@@ -360,7 +360,7 @@ func _resolve_nearby_defenders(attacker: UnitGroup, target_base: Base) -> void:
 			continue
 
 		var attacker_count := attacker.get_unit_count()
-		var defender_count := defender.get_unit_count()
+		var defender_count: int = int(defender.get_unit_count())
 		if attacker_count > defender_count:
 			attacker.set_unit_count(attacker_count - defender_count)
 			defender.destroy_group()

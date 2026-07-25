@@ -52,7 +52,7 @@ func setup(base_data: Dictionary, spawn_position: Vector2) -> void:
 	_update_count_label()
 	queue_redraw()
 
-func set_owner(new_team_id: String) -> void:
+func change_team(new_team_id: String) -> void:
 	if team_id == new_team_id:
 		return
 
