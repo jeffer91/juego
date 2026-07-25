@@ -1,19 +1,12 @@
 {
   "level_number": 1,
   "name": "Primer combate",
-  "description": "Nivel inicial con tres rutas, bases laterales de soldados y base central de drones.",
-  "teams": {
-    "player": {
-      "color": "blue",
-      "starts_with": "player_base"
-    },
-    "enemy": {
-      "color": "red",
-      "starts_with": "enemy_base"
-    },
-    "neutral": {
-      "color": "gray"
-    }
+  "description": "Nivel inicial con tres rutas, bases laterales de soldados y una base central de drones.",
+  "settings": {
+    "objective": "Conquista la base roja antes de que el enemigo capture la base azul.",
+    "ai_action_interval": 4.2,
+    "victory_base_id": "enemy_base",
+    "defeat_base_id": "player_base"
   },
   "points": [
     { "id": "player_base", "x": 160, "y": 360 },
@@ -37,7 +30,8 @@
       "team": "player",
       "base_type": "main_player",
       "difficulty": 0,
-      "produces": "soldier"
+      "produces": "soldier",
+      "initial_units": 15
     },
     {
       "id": "enemy_base",
@@ -45,7 +39,8 @@
       "team": "enemy",
       "base_type": "main_enemy",
       "difficulty": 0,
-      "produces": "soldier"
+      "produces": "soldier",
+      "initial_units": 15
     },
     {
       "id": "neutral_top",

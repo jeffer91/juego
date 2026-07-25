@@ -1,0 +1,11 @@
+{
+  "id": "drone",
+  "name": "Dron explosivo",
+  "group_size": 1,
+  "max_groups_per_command": 1,
+  "speed": 165.0,
+  "attack_power": 8,
+  "combat_radius": 92.0,
+  "explosion_radius": 96.0,
+  "can_capture": false
+}
