@@ -7,8 +7,7 @@ on:
   pull_request:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   validacion-estatica:
@@ -17,7 +16,6 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
           show-progress: false
 
       - name: Comprobar estructura, JSON y referencias
@@ -32,25 +30,7 @@ jobs:
       - name: Descargar repositorio
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
-          fetch-depth: 0
           show-progress: false
-
-      - name: Aplicar correcciones de compatibilidad
-        run: python3 tools/fix_godot_compat.py
-
-      - name: Guardar correcciones en la rama
-        shell: bash
-        run: |
-          if git diff --quiet; then
-            echo "No se requieren correcciones adicionales."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add scripts/core/MainGame.gd scripts/bases/BaseSpawner.gd scripts/bases/Base.gd scripts/units/UnitGroup.gd scripts/ai/EnemyAI.gd
-          git commit -m "Resolver dependencias de autoload en Godot"
-          git push origin HEAD:"${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
 
       - name: Instalar utilidades
         run: sudo apt-get update -qq && sudo apt-get install -y -qq unzip
@@ -62,24 +42,12 @@ jobs:
           set +e
           bash tools/run_godot_smoke_test.sh > godot-test.log 2>&1
           status=$?
+          if grep -Eq 'SCRIPT ERROR:|^ERROR:' godot-test.log; then
+            status=1
+          fi
           echo "status=${status}" >> "$GITHUB_OUTPUT"
           tail -n 120 godot-test.log
           exit 0
-
-      - name: Publicar resultado de la verificación
-        if: always() && github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          COMMENT_ID: "5077337511"
-        run: |
-          {
-            echo "### Verificación funcional con Godot"
-            echo
-            echo '```text'
-            grep -E '^\[OK\]|^\[FALLO\]|RESULTADO|SCRIPT ERROR|ERROR:|WARNING:' godot-test.log | tail -n 120 || true
-            echo '```'
-          } > godot-comment.md
-          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${COMMENT_ID}" -f body="$(cat godot-comment.md)"
 
       - name: Confirmar resultado de Godot
         if: steps.godot_test.outputs.status != '0'
