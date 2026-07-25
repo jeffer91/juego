@@ -1,5 +1,7 @@
 # Juego Conquista de Bases
 
+![Validar proyecto](https://github.com/jeffer91/juego/actions/workflows/validate-project.yml/badge.svg)
+
 Juego 2D de estrategia en tiempo real para Android, desarrollado con **Godot 4**. El jugador controla el equipo azul, conquista bases neutrales y debe tomar la base roja antes de perder la propia.
 
 ## Estado del desarrollo
@@ -55,6 +57,24 @@ scripts/
   movement/    Rutas y búsqueda de caminos
   ui/          Interfaz del juego
   units/       Soldados y drones
+tools/
+  validate_project.py  Validación estática
+```
+
+## Validación automática
+
+Cada cambio enviado a `main` o mediante un pull request comprueba automáticamente:
+
+- que los JSON sean válidos;
+- que las rutas y las bases usen puntos existentes;
+- que las unidades y bases tengan definiciones completas;
+- que las referencias `res://` apunten a archivos existentes;
+- que no existan clases globales duplicadas.
+
+También puede ejecutarse localmente:
+
+```bash
+python3 tools/validate_project.py
 ```
 
 ## Cómo abrir el proyecto
