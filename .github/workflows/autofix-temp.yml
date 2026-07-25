@@ -24,32 +24,92 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
-          replacements = {
-              Path("scripts/bases/Base.gd"): [
-                  ("func set_owner(new_team_id: String) -> void:", "func change_team(new_team_id: String) -> void:"),
-              ],
-              Path("scripts/core/MainGame.gd"): [
-                  ("target_base.set_owner(group.get_team_id())", "target_base.change_team(group.get_team_id())"),
-                  ("var defender_count := defender.get_unit_count()", "var defender_count: int = int(defender.get_unit_count())"),
-              ],
-              Path("tests/test_gameplay.gd"): [
-                  ("var units_before := player_base.get_available_units()", "var units_before: int = int(player_base.get_available_units())"),
-                  ("var units_after := player_base.get_available_units()", "var units_after: int = int(player_base.get_available_units())"),
-                  ("var groups_before := game._get_active_groups().size()", "var groups_before: int = int(game._get_active_groups().size())"),
-                  ("var groups_before_ai := game._get_active_groups().size()", "var groups_before_ai: int = int(game._get_active_groups().size())"),
-                  ("var groups_after_ai := game._get_active_groups().size()", "var groups_after_ai: int = int(game._get_active_groups().size())"),
-                  ("enemy_base.set_owner(\"player\")", "enemy_base.change_team(\"player\")"),
-                  ("restarted_player_base.set_owner(\"enemy\")", "restarted_player_base.change_team(\"enemy\")"),
-              ],
-          }
-
-          for path, changes in replacements.items():
+          def replace_all(path: Path, replacements: list[tuple[str, str]]) -> None:
               text = path.read_text(encoding="utf-8")
               original = text
-              for old, new in changes:
+              for old, new in replacements:
                   text = text.replace(old, new)
               if text != original:
                   path.write_text(text, encoding="utf-8")
+
+          main_game = Path("scripts/core/MainGame.gd")
+          replace_all(main_game, [
+              ("GameManager.current_level", "int(_game_manager().get(\"current_level\"))"),
+              ("GameManager.get_state_name()", "str(_game_manager().call(\"get_state_name\"))"),
+              ("GameManager.start_game(current_level)", "_game_manager().call(\"start_game\", current_level)"),
+              ("GameManager.register_victory()", "_game_manager().call(\"register_victory\")"),
+              ("GameManager.has_level(current_level + 1)", "bool(_game_manager().call(\"has_level\", current_level + 1))"),
+              ("GameManager.register_defeat()", "_game_manager().call(\"register_defeat\")"),
+              ("GameManager.is_level_unlocked(next_level)", "bool(_game_manager().call(\"is_level_unlocked\", next_level))"),
+          ])
+          text = main_game.read_text(encoding="utf-8")
+          marker = "var hud: GameHUD\n"
+          helper = "\nfunc _game_manager() -> Variant:\n\treturn get_node(\"/root/GameManager\")\n"
+          if "func _game_manager() -> Variant:" not in text:
+              text = text.replace(marker, marker + helper)
+              main_game.write_text(text, encoding="utf-8")
+
+          for relative_path in [
+              "scripts/bases/BaseSpawner.gd",
+              "scripts/units/UnitGroup.gd",
+              "scripts/ai/EnemyAI.gd",
+          ]:
+              path = Path(relative_path)
+              text = path.read_text(encoding="utf-8")
+              text = text.replace("GameManager.", "_game_manager().")
+              marker = "class_name "
+              if "func _game_manager() -> Variant:" not in text:
+                  class_line_end = text.find("\n", text.find(marker))
+                  insert_at = class_line_end + 1
+                  helper = "\nfunc _game_manager() -> Variant:\n\treturn get_node(\"/root/GameManager\")\n"
+                  text = text[:insert_at] + helper + text[insert_at:]
+              path.write_text(text, encoding="utf-8")
+
+          base_path = Path("scripts/bases/Base.gd")
+          base_text = base_path.read_text(encoding="utf-8")
+          old_base_colors = '''func _get_team_color() -> Color:
+\tmatch team_id:
+\t\t"player":
+\t\t\treturn TeamManager.get_team_color(TeamManager.Team.PLAYER)
+\t\t"enemy":
+\t\t\treturn TeamManager.get_team_color(TeamManager.Team.ENEMY)
+\t\t_:
+\t\t\treturn TeamManager.get_team_color(TeamManager.Team.NEUTRAL)
+'''
+          new_base_colors = '''func _get_team_color() -> Color:
+\tmatch team_id:
+\t\t"player":
+\t\t\treturn Color(0.12, 0.45, 1.0)
+\t\t"enemy":
+\t\t\treturn Color(1.0, 0.15, 0.12)
+\t\t_:
+\t\t\treturn Color(0.55, 0.55, 0.55)
+'''
+          base_text = base_text.replace(old_base_colors, new_base_colors)
+          base_path.write_text(base_text, encoding="utf-8")
+
+          unit_path = Path("scripts/units/UnitGroup.gd")
+          unit_text = unit_path.read_text(encoding="utf-8")
+          old_unit_colors = '''func _get_team_color() -> Color:
+\tmatch team_id:
+\t\t"player":
+\t\t\treturn TeamManager.get_team_color(TeamManager.Team.PLAYER)
+\t\t"enemy":
+\t\t\treturn TeamManager.get_team_color(TeamManager.Team.ENEMY)
+\t\t_:
+\t\t\treturn TeamManager.get_team_color(TeamManager.Team.NEUTRAL)
+'''
+          new_unit_colors = '''func _get_team_color() -> Color:
+\tmatch team_id:
+\t\t"player":
+\t\t\treturn Color(0.12, 0.45, 1.0)
+\t\t"enemy":
+\t\t\treturn Color(1.0, 0.15, 0.12)
+\t\t_:
+\t\t\treturn Color(0.55, 0.55, 0.55)
+'''
+          unit_text = unit_text.replace(old_unit_colors, new_unit_colors)
+          unit_path.write_text(unit_text, encoding="utf-8")
           PY
 
       - name: Guardar correcciones
@@ -60,6 +120,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add scripts/bases/Base.gd scripts/core/MainGame.gd tests/test_gameplay.gd
-          git commit -m "Corregir errores de compilación detectados por Godot"
+          git add scripts/core/MainGame.gd scripts/bases/BaseSpawner.gd scripts/bases/Base.gd scripts/units/UnitGroup.gd scripts/ai/EnemyAI.gd
+          git commit -m "Resolver dependencias de autoload en Godot headless"
           git push origin HEAD:test/verificar-bloques-1-12
