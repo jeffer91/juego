@@ -95,23 +95,10 @@ func is_point_on_route(point: Vector2, tolerance: float = 45.0) -> bool:
 	return point.distance_to(get_closest_point_on_route(point)) <= tolerance
 
 func get_closest_point_on_route(point: Vector2) -> Vector2:
-	var best_point := Vector2.ZERO
-	var best_distance := INF
-
-	for segment_value in get_segment_positions():
-		var segment: Dictionary = segment_value
-		var candidate := get_closest_point_on_segment(
-			point,
-			segment["from_position"],
-			segment["to_position"]
-		)
-		var distance := point.distance_to(candidate)
-
-		if distance < best_distance:
-			best_distance = distance
-			best_point = candidate
-
-	return best_point
+	var segment_info := _get_closest_segment_info(point)
+	if segment_info.is_empty():
+		return Vector2.ZERO
+	return segment_info.get("projection", Vector2.ZERO)
 
 func get_closest_point_on_segment(point: Vector2, segment_start: Vector2, segment_end: Vector2) -> Vector2:
 	var segment_vector := segment_end - segment_start
@@ -138,31 +125,107 @@ func get_nearest_point_id(position: Vector2) -> String:
 	return best_id
 
 func build_graph_path(start_position: Vector2, raw_destination: Vector2) -> Array:
-	var result: Array = []
-	if route_points.is_empty():
+	if route_points.is_empty() or route_segments.is_empty():
 		return [start_position, raw_destination]
 
-	var valid_destination := get_closest_point_on_route(raw_destination)
-	var start_point_id := get_nearest_point_id(start_position)
-	var destination_point_id := get_nearest_point_id(valid_destination)
+	var start_info := _get_closest_segment_info(start_position)
+	var destination_info := _get_closest_segment_info(raw_destination)
+	if start_info.is_empty() or destination_info.is_empty():
+		return []
 
-	result.append(start_position)
+	var start_projection: Vector2 = start_info.get("projection", start_position)
+	var destination_projection: Vector2 = destination_info.get("projection", raw_destination)
+	var candidates: Array = []
 
-	if point_numeric_ids.has(start_point_id) and point_numeric_ids.has(destination_point_id):
-		var id_path := astar.get_id_path(
-			int(point_numeric_ids[start_point_id]),
-			int(point_numeric_ids[destination_point_id])
+	# Si ambos puntos están en el mismo tramo, el recorrido directo es válido y evita
+	# que una unidad retroceda hasta un nodo para después volver por la misma ruta.
+	if str(start_info.get("id", "")) == str(destination_info.get("id", "")):
+		var direct_path: Array = []
+		_append_unique_point(direct_path, start_position)
+		_append_unique_point(direct_path, start_projection)
+		_append_unique_point(direct_path, destination_projection)
+		candidates.append(direct_path)
+
+	var start_endpoints: Array = [
+		{"id": str(start_info.get("from", "")), "position": start_info.get("from_position", Vector2.ZERO)},
+		{"id": str(start_info.get("to", "")), "position": start_info.get("to_position", Vector2.ZERO)}
+	]
+	var destination_endpoints: Array = [
+		{"id": str(destination_info.get("from", "")), "position": destination_info.get("from_position", Vector2.ZERO)},
+		{"id": str(destination_info.get("to", "")), "position": destination_info.get("to_position", Vector2.ZERO)}
+	]
+
+	# Se prueban las cuatro combinaciones de extremos y se conserva la ruta más corta.
+	# Así, una unidad que ya está en medio de un tramo nunca toma un desvío innecesario.
+	for start_endpoint_value in start_endpoints:
+		var start_endpoint: Dictionary = start_endpoint_value
+		var start_id := str(start_endpoint.get("id", ""))
+		if not point_numeric_ids.has(start_id):
+			continue
+
+		for destination_endpoint_value in destination_endpoints:
+			var destination_endpoint: Dictionary = destination_endpoint_value
+			var destination_id := str(destination_endpoint.get("id", ""))
+			if not point_numeric_ids.has(destination_id):
+				continue
+
+			var id_path: PackedInt64Array = astar.get_id_path(
+				int(point_numeric_ids[start_id]),
+				int(point_numeric_ids[destination_id])
+			)
+			if id_path.is_empty():
+				continue
+
+			var candidate: Array = []
+			_append_unique_point(candidate, start_position)
+			_append_unique_point(candidate, start_projection)
+			for numeric_id in id_path:
+				_append_unique_point(candidate, astar.get_point_position(int(numeric_id)))
+			_append_unique_point(candidate, destination_projection)
+			candidates.append(candidate)
+
+	var best_path: Array = []
+	var best_length := INF
+	for candidate_value in candidates:
+		var candidate: Array = candidate_value
+		var candidate_length := _get_path_length(candidate)
+		if candidate_length < best_length:
+			best_length = candidate_length
+			best_path = candidate
+
+	return best_path
+
+func _get_closest_segment_info(point: Vector2) -> Dictionary:
+	var best_segment: Dictionary = {}
+	var best_distance := INF
+
+	for segment_value in get_segment_positions():
+		var segment: Dictionary = segment_value
+		var projection := get_closest_point_on_segment(
+			point,
+			segment["from_position"],
+			segment["to_position"]
 		)
+		var distance := point.distance_to(projection)
+		if distance < best_distance:
+			best_distance = distance
+			best_segment = segment.duplicate(true)
+			best_segment["projection"] = projection
+			best_segment["distance"] = distance
 
-		for numeric_id in id_path:
-			var route_position := astar.get_point_position(int(numeric_id))
-			if result[-1].distance_to(route_position) > 1.0:
-				result.append(route_position)
+	return best_segment
 
-	if result[-1].distance_to(valid_destination) > 1.0:
-		result.append(valid_destination)
+func _append_unique_point(path: Array, point: Vector2) -> void:
+	if path.is_empty() or (path[-1] as Vector2).distance_to(point) > 1.0:
+		path.append(point)
 
-	return result
+func _get_path_length(path: Array) -> float:
+	var total := 0.0
+	for index in range(1, path.size()):
+		var previous: Vector2 = path[index - 1]
+		var current: Vector2 = path[index]
+		total += previous.distance_to(current)
+	return total
 
 func _build_graph() -> void:
 	astar.clear()
